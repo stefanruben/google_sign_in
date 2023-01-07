@@ -89,89 +89,9 @@ class _MyHomePageState extends State<MyHomePage> with SingleTickerProviderStateM
       body: 
       _currentUser != null?
         _currentUser != null? Home(nama: _currentUser!.email) : const MyHomePage()
-      // ListTile(
-      //         leading: GoogleUserCircleAvatar(identity: _currentUser!),
-      //         title: Text(_currentUser!.displayName ?? ''),
-      //         subtitle: Text(_currentUser!.email),
-      //         trailing: IconButton(
-      //           icon: Icon(Icons.logout_outlined),
-      //           onPressed: () async {
-      //             try {
-      //               await _googleSignIn.disconnect();
-      //             } catch (error) {
-      //               if (kDebugMode) {
-      //                 print(error);
-      //               }
-      //             }
-                  
-      //           },
-      //         ),
-      //       )
+      
           : 
-          // Container(
-          //     alignment: Alignment.bottomCenter,
-          //     child: ElevatedButton(
-          //         onPressed: ()  {
-          //           //await _handleSignIn();
-          //           Navigator.push(context, MaterialPageRoute(builder: (context){
-          //               return Home();
-          //           }));
-          //         },
-          //         child: Text('Sign In')),
-          //   ),
-
-          // Container(
-          //   child: Column(
-          //     crossAxisAlignment: CrossAxisAlignment.stretch,
-          //     mainAxisAlignment: MainAxisAlignment.center,
-          //     children: [
-          //       TextButton.icon(
-          //         onPressed: () {
-          //           Navigator.push(context, MaterialPageRoute(builder: (context){
-          //               return Home();
-          //           }));
-          //         }, 
-          //         icon: const Icon(Icons.login),
-          //         label: Text('Sign In with Google')
-          //       ),
-          //       FloatingActionButton.extended(
-          //         onPressed: () {
-          //           Navigator.push(context, MaterialPageRoute(builder: (context){
-          //               return Home();
-          //           }));
-          //           print("google");
-          //         }, 
-          //         label:  Text('Sign In with Google'), 
-          //         backgroundColor: Colors.white,
-          //         foregroundColor: Colors.black,
-          //       ),SizedBox(height: 10),
-          //       FloatingActionButton.extended(
-          //         onPressed: () {
-          //           print("yahoo");
-          //         }, 
-          //         label: Text('Sign in with Yahoo'),
-          //         backgroundColor: Colors.white,
-          //         foregroundColor: Colors.black,
-          //       ), SizedBox(height: 10),
-          //       FloatingActionButton.extended(
-          //         onPressed: () {
-                    
-          //         }, 
-          //         label: Text('Sign in with GitHub'),
-          //         backgroundColor: Colors.white,
-          //         foregroundColor: Colors.black,
-          //       ), SizedBox(height: 10),
-          //       FloatingActionButton.extended(
-          //         onPressed: () {
-                    
-          //         }, 
-          //         label: Text('Sign in with Facebook'),
-          //         backgroundColor: Colors.white,
-          //         foregroundColor: Colors.black,
-          //       ), SizedBox(height: 10),
-          //     ],
-          //   ),
-          // ),
+          
         Stack(
           children: [
             //mainAxisAlignment: MainAxisAlignment.center
@@ -192,31 +112,7 @@ class _MyHomePageState extends State<MyHomePage> with SingleTickerProviderStateM
             ), 
             Container(
               margin: EdgeInsets.only(top: 150, left: 30, right: 30),
-              //padding: const EdgeInsets.symmetric(horizontal: 25, vertical: 0),
-              // decoration: BoxDecoration(
-              //   //border: Border.all(width: 0.03, color: Colors.white)
-              //   //color: Colors.transparent,
-              //   // boxShadow: [BoxShadow(
-              //   //   color: Colors.white,
-              //   //   blurRadius: 15,
-              //   //   spreadRadius: 10
-              //   // )]
-              //   boxShadow: [
-              //     BoxShadow(
-              //       color: Color(0xFF000000).withAlpha(60),
-              //       blurRadius: 6.0,
-              //       spreadRadius: 0.0,
-              //       offset: Offset(
-              //         0.0,
-              //         3.0,
-              //       ),
-              //     ),
-              //   ],
-              //   // gradient: LinearGradient(
-              //   //   colors: [Colors.transparent, Colors.white, Colors.transparent],
-              //   //   stops: [0.0, 0.7, 1.0]
-              //   // ),
-              // ),
+              
               child: Shimmer.fromColors(
                 child: Image.network("https://upload.wikimedia.org/wikipedia/commons/1/17/Google-flutter-logo.png"), 
                 baseColor: Colors.blueAccent, 
@@ -243,13 +139,7 @@ class _MyHomePageState extends State<MyHomePage> with SingleTickerProviderStateM
                           ),
                           onPressed: (() async {
                             await _handleSignIn();
-                            //final box = Hive.
-                            // var nama = _currentUser!.displayName;
-                            // print(nama);
-                            //_googleSignIn.disconnect();
-                            // Navigator.push(context, MaterialPageRoute(builder: (context){
-                            //   return Home(nama: nama,);
-                            // }));
+                            
                           }), 
                           icon: Image.network("https://www.freepnglogos.com/uploads/google-logo-png/google-logo-png-suite-everything-you-need-know-about-google-newest-0.png", height: 20, width: 20,),
                            
@@ -258,67 +148,7 @@ class _MyHomePageState extends State<MyHomePage> with SingleTickerProviderStateM
                     )
                   ],
                 ),
-                // SizedBox(
-                //   height: 10
-                // ),
-                // Row(
-                //   children: <Widget>[
-                //     Expanded(
-                //       child: Container(
-                //         child: ElevatedButton(
-                //           onPressed: (() async{
-                //             await _handleSignIn();
-                //             // var nama = _currentUser!.displayName;
-                //             // await _googleSignIn.disconnect();
-                //             // // ignore: use_build_context_synchronously
-                //             // Navigator.push(context, MaterialPageRoute(builder: (context){
-                //             //   return Home(nama: nama,);
-                //             // }));
-                //           }), 
-                //           child:  const Text('Sign in with yahoo', style: TextStyle(fontSize: 18), ),
-                //           style: ElevatedButton.styleFrom(
-                //             backgroundColor: Colors.white, elevation: 20, minimumSize: Size(50, 50), 
-                //             foregroundColor: Colors.black,
-                //             shape: RoundedRectangleBorder( //to set border radius to button
-                //                 borderRadius: BorderRadius.circular(30)
-                //             ),
-                //           ),
-                          
-                //         )
-                //       )
-                //   )
-                //   ],
-                // ),
-                // SizedBox(
-                //   height: 10
-                // ),
-                // Row(
-                //   children: <Widget>[
-                //     Expanded(
-                //       child: Container(
-                //         child: ElevatedButton(
-                //           onPressed: (() async{
-                //             await _handleSignIn();
-                //             // var nama = _currentUser!.displayName;
-                //             // await _googleSignIn.disconnect();
-                //             // Navigator.push(context, MaterialPageRoute(builder: (context){
-                //             //   return Home(nama: nama,);
-                //             // }));
-                //           }), 
-                //           child:  const Text('Sign in with github', style: TextStyle(fontSize: 18), ),
-                //           style: ElevatedButton.styleFrom(
-                //             backgroundColor: Colors.white, elevation: 20, minimumSize: Size(50, 50), 
-                //             foregroundColor: Colors.black,
-                //             shape: RoundedRectangleBorder( //to set border radius to button
-                //                 borderRadius: BorderRadius.circular(30)
-                //             ),
-                //           ),
-                          
-                //         )
-                //       )
-                //   )
-                //   ],
-                // )
+                
               ],
             )
           ],
