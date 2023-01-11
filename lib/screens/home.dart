@@ -1,9 +1,15 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:google_sign_in_flutter/main.dart';
+import 'package:google_sign_in_flutter/models/negara.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import '../item.dart';
 import '../models/todo.dart';
+import 'package:http/http.dart' as http;
+
+List<String> listbutton = <String>['Select'];
 
 class Home extends StatefulWidget {
   String nama;
@@ -30,14 +36,16 @@ class _HomeState extends State<Home> {
   final map = Map<String, dynamic>();
   final Box box = Hive.box('mybox');
   String namaEmail = "";
-
+  String nama = "";
+  var _valProvince;
+  
+  List _dataProvince = [];
   @override
   void initState() {
     // TODO: implement initState
     _foundToDo = list;
-    print(box.values);
     namaEmail = box.get('email');
-    print(namaEmail);
+    nama = box.get("nama");
     // if (_myBox.get("TODOLIST") == null) {
     //   list.createInitialData();
     // } else {
@@ -51,6 +59,32 @@ class _HomeState extends State<Home> {
     });
     _googleSignIn.signInSilently();
     super.initState();
+    getNegaraData();
+  }
+  Future getNegaraData() async{
+    var response = await http.get(Uri.http('jsonplaceholder.typicode.com', 'users'));
+    var jsonData = jsonDecode(response.body);
+    List<Negara> negaras = [];
+    //_dataProvince = jsonData;
+    for(var i in jsonData){
+      Negara negara = Negara(name: i['name']);
+      _dataProvince.add(negara);
+      //print(_dataProvince[i].name.toString());
+      //listbutton.add(_dataProvince[i].name.toString());
+      
+    }
+    for(var i = 0; i < _dataProvince.length; i++){
+      listbutton.add(_dataProvince[i].name);
+    }
+    //_dataProvince = jsonData;
+    //print(jsonData);
+    // print(map);
+    //print(listbutton.toString());
+    
+    print(listbutton.toString());
+    print(_dataProvince.runtimeType);
+    
+    return _dataProvince;
   }
 
   @override
@@ -63,9 +97,11 @@ class _HomeState extends State<Home> {
         alignment: Alignment.topRight,
         children: [
           Container(
+            margin: const EdgeInsets.only(
+                    top: 24, right: 130),
               padding: const EdgeInsets.symmetric(horizontal: 25, vertical: 15),
               // ignore: prefer_interpolation_to_compose_strings
-              child: Text('Welcome, $namaEmail', style: const TextStyle(
+              child: Text('Welcome, $nama - $namaEmail', style: const TextStyle(
                             color: Colors.white,
                             fontSize: 24,
                             fontWeight: FontWeight.bold
@@ -76,15 +112,41 @@ class _HomeState extends State<Home> {
             ),
             
           IconButton(
+            padding: const EdgeInsets.only(
+                    top: 40, right: 40),
             onPressed: () async{
-              _googleSignIn.signOut();
-              Navigator.pushReplacement(context, MaterialPageRoute(builder: (context)=>MyHomePage()));
+              //_googleSignIn.signOut();
+              box.clear();
+              Navigator.pop(context, MaterialPageRoute(builder: (context)=>MyHomePage()));
             }, 
             icon: Icon(Icons.logout),
             alignment: Alignment.bottomRight,
           ),
+          SizedBox(height: 10,),
           Container(
-            padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 80),
+             margin: const EdgeInsets.only(
+                    top: 80, right: 200),
+            // ignore: prefer_const_literals_to_create_immutables
+              // child: DropdownButton(
+              //   //hint: const Text("Select Province"),
+              //   value: _valProvince,
+              //   items: _dataProvince.map((item) {
+              //     return DropdownMenuItem(
+              //       child: Text(item['name'].toString()),
+              //       value: item['name'].toString(),
+              //   );
+              //   }).toList(),
+              //   onChanged: (item) {
+              //     setState(() {
+              //       _valProvince = item;
+              //     });
+              //   },
+              // ),
+            child: DropdownButtonExample(),
+            
+          ),
+          Container(
+            padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 150),
             child: Column(
               children: [
                 searchBox(),
@@ -239,9 +301,51 @@ class _HomeState extends State<Home> {
   AppBar _buildApp() {
     return AppBar(
       elevation: 0,
-      // title: Container(
-      //   child: Text('To Do List App'),
-      // ),
+      title: Container(
+        child: Text('To Do List App'),
+      ),
+    );
+  }
+}
+
+class DropdownButtonExample extends StatefulWidget {
+  const DropdownButtonExample({super.key});
+
+  @override
+  State<DropdownButtonExample> createState() => _DropdownButtonExampleState();
+}
+
+class _DropdownButtonExampleState extends State<DropdownButtonExample> {
+  String dropdownValue = listbutton.first;
+
+  @override
+  Widget build(BuildContext context) {
+    return DropdownButton<String>(
+      value: dropdownValue,
+      icon: const Icon(Icons.arrow_downward),
+      elevation: 16,
+      iconEnabledColor: Colors.white, //Icon color
+      style: TextStyle(  //te
+         color: Colors.white, //Font color
+         fontSize: 20 //font size on dropdown button
+      ),
+      dropdownColor: Colors.redAccent,
+      underline: Container(
+        height: 2,
+        color: Colors.deepPurpleAccent,
+      ),
+      onChanged: (String? value) {
+        // This is called when the user selects an item.
+        setState(() {
+          dropdownValue = value!;
+        });
+      },
+      items: listbutton.map<DropdownMenuItem<String>>((String value) {
+        return DropdownMenuItem<String>(
+          value: value,
+          child: Text(value),
+        );
+      }).toList(),
     );
   }
 }
