@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_facebook_auth/flutter_facebook_auth.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:google_sign_in_flutter/main.dart';
 import 'package:google_sign_in_flutter/models/negara.dart';
@@ -12,9 +13,8 @@ import 'package:http/http.dart' as http;
 List<String> listbutton = <String>['Select'];
 
 class Home extends StatefulWidget {
-  String nama;
 
-  Home({super.key, required this.nama});
+  Home({super.key});
 
   @override
   State<Home> createState() => _HomeState();
@@ -116,6 +116,15 @@ class _HomeState extends State<Home> {
                     top: 40, right: 40),
             onPressed: () async{
               //_googleSignIn.signOut();
+              if(box.get('login') == 'email'){
+                print('email');
+              } else if(box.get('login') == 'google'){
+                print('google');
+                _googleSignIn.signOut();
+              } else {
+                print('facebook');
+                await FacebookAuth.instance.logOut();
+              }
               box.clear();
               Navigator.pop(context, MaterialPageRoute(builder: (context)=>MyHomePage()));
             }, 
@@ -123,28 +132,28 @@ class _HomeState extends State<Home> {
             alignment: Alignment.bottomRight,
           ),
           SizedBox(height: 10,),
-          Container(
-             margin: const EdgeInsets.only(
-                    top: 80, right: 200),
-            // ignore: prefer_const_literals_to_create_immutables
-              // child: DropdownButton(
-              //   //hint: const Text("Select Province"),
-              //   value: _valProvince,
-              //   items: _dataProvince.map((item) {
-              //     return DropdownMenuItem(
-              //       child: Text(item['name'].toString()),
-              //       value: item['name'].toString(),
-              //   );
-              //   }).toList(),
-              //   onChanged: (item) {
-              //     setState(() {
-              //       _valProvince = item;
-              //     });
-              //   },
-              // ),
-            child: DropdownButtonExample(),
+          // Container(
+          //    margin: const EdgeInsets.only(
+          //           top: 80, right: 200),
+          //   // ignore: prefer_const_literals_to_create_immutables
+          //     // child: DropdownButton(
+          //     //   //hint: const Text("Select Province"),
+          //     //   value: _valProvince,
+          //     //   items: _dataProvince.map((item) {
+          //     //     return DropdownMenuItem(
+          //     //       child: Text(item['name'].toString()),
+          //     //       value: item['name'].toString(),
+          //     //   );
+          //     //   }).toList(),
+          //     //   onChanged: (item) {
+          //     //     setState(() {
+          //     //       _valProvince = item;
+          //     //     });
+          //     //   },
+          //     // ),
+          //   child: DropdownButtonExample(),
             
-          ),
+          // ),
           Container(
             padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 150),
             child: Column(
