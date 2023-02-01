@@ -49,7 +49,8 @@ class itemDart extends StatelessWidget {
             icon: Icons.delete,
             label: "Delete",
             onPressed: (context) => onDeletedItem(todo.id)
-          )
+          ),
+          SizedBox(height: 10,)
         ],
       ),
       child: 

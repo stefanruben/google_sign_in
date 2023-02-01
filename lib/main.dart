@@ -124,7 +124,7 @@ class _MyHomePageState extends State<MyHomePage> with SingleTickerProviderStateM
     return Scaffold(
       backgroundColor: Colors.indigo,
       appBar: AppBar(
-        title: Text(_currentUser != null ? 'To Do List App' : 'Login'),
+        title: Text(_checking != false ? 'To Do List App' : 'Login'),
         //title: Text('Google Sign In'),
         elevation: 0.5,
         centerTitle: true,
@@ -260,6 +260,60 @@ class _MyHomePageState extends State<MyHomePage> with SingleTickerProviderStateM
                         }, 
                         icon: Image.network("https://upload.wikimedia.org/wikipedia/commons/thumb/b/b8/2021_Facebook_icon.svg/768px-2021_Facebook_icon.svg.png", height: 20,width: 20,),
                         label: Text('Sign in with Facebook', style: TextStyle(fontSize: 18, color: Colors.black),),
+                        style: ElevatedButton.styleFrom(
+                          primary: Colors.white,
+                          padding: EdgeInsets.only(top: 10, bottom: 10, right: 50, left: 50),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(10)
+                          )
+                        ),
+                      ),
+                    ),
+                    SizedBox(height: 10,),
+                    Container(
+                      child: ElevatedButton.icon(
+                        onPressed: () async {
+                          Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (BuildContext context) => LinkedInUserWidget(
+                                  appBar: AppBar(
+                                    title: Text('OAuth User'),
+                                  ),
+                                  //destroySession: logoutUser,
+                                  redirectUrl: 'https://youtube.com/callback',
+                                  clientId: '86im5gggdfm1xo',
+                                  clientSecret: 'bmBtJrCUmPyN3Nj0',
+                                  projection:  [
+                                    ProjectionParameters.id,
+                                    ProjectionParameters.localizedFirstName,
+                                    ProjectionParameters.localizedLastName,
+                                    ProjectionParameters.firstName,
+                                    ProjectionParameters.lastName,
+                                    ProjectionParameters.profilePicture,
+                                  ], 
+                                  onGetUserProfile:
+                                      (UserSucceededAction linkedInUser) {
+                                            print('Access token ${linkedInUser.user.token.accessToken}');
+                                            print('First name: ${linkedInUser.user.firstName!.localized!.label}');
+                                            print('Last Name ${linkedInUser.user.lastName!.localized!.label} ');
+                                            final Box box = Hive.box('mybox');
+                                            box.put('nama', linkedInUser.user.firstName!.localized!.label);
+                                            box.put('email', linkedInUser!.user!.email!.elements![0]!.handleDeep!.emailAddress);
+                                            //     email: linkedInUser ?.email?.elements[0]?.handleDeep?.emailAddress,
+                                            box.put('login', 'linkedIn');
+                                            Navigator.push(context, MaterialPageRoute(builder: (context)=>Home()));
+                                  },
+                                  onError: (UserFailedAction e) {
+                                            print('Error: ${e.toString()}');
+                                  },
+                                ),
+                                fullscreenDialog: true,
+                              ),
+                          );
+                        }, 
+                        icon: Image.network("https://cdn-icons-png.flaticon.com/512/174/174857.png", height: 20,width: 20,),
+                        label: Text('Sign in with LinkedIn', style: TextStyle(fontSize: 18, color: Colors.black),),
                         style: ElevatedButton.styleFrom(
                           primary: Colors.white,
                           padding: EdgeInsets.only(top: 10, bottom: 10, right: 50, left: 50),

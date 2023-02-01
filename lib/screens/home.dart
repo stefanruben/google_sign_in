@@ -44,6 +44,7 @@ class _HomeState extends State<Home> {
   void initState() {
     // TODO: implement initState
     _foundToDo = list;
+    //if(box.get('login')== "linkedIn") namaEmail = "linkedIn";
     namaEmail = box.get('email');
     nama = box.get("nama");
     // if (_myBox.get("TODOLIST") == null) {
@@ -92,7 +93,9 @@ class _HomeState extends State<Home> {
     return Scaffold(
       backgroundColor: Colors.indigo,
       //appBar: _buildApp(),
-      body: Stack(
+      body: 
+      
+      Stack(
         //mainAxisAlignment: MainAxisAlignment.end,
         alignment: Alignment.topRight,
         children: [
@@ -121,9 +124,11 @@ class _HomeState extends State<Home> {
               } else if(box.get('login') == 'google'){
                 print('google');
                 _googleSignIn.signOut();
-              } else {
+              } else if(box.get('login') == 'facebook'){
                 print('facebook');
                 await FacebookAuth.instance.logOut();
+              } else {
+                print('linkedIn');
               }
               box.clear();
               Navigator.pop(context, MaterialPageRoute(builder: (context)=>MyHomePage()));
@@ -155,15 +160,16 @@ class _HomeState extends State<Home> {
             
           // ),
           Container(
-            padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 150),
+            padding: const EdgeInsets.only(top: 150, bottom: 45),
             child: Column(
               children: [
                 searchBox(),
                 Expanded(
                   child: ListView(
+                    padding: EdgeInsets.all(10),
                     children: [
                       Container(
-                        margin: EdgeInsets.only(top: 20, bottom: 15),
+                        margin: EdgeInsets.only(top:20,bottom: 10),
                         child: const Text(
                           'To Do List',
                           style: TextStyle(
@@ -208,7 +214,7 @@ class _HomeState extends State<Home> {
                   ),
                   child: TextField(
                     controller: _todoController,
-                    decoration: InputDecoration(
+                    decoration: const InputDecoration(
                       contentPadding: EdgeInsets.all(10),
                       prefixIconConstraints: BoxConstraints(maxHeight: 20, minWidth: 25),
                       hintText: 'Add New ToDo',
