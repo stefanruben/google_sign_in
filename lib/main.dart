@@ -7,11 +7,26 @@ import 'package:hive_flutter/hive_flutter.dart';
 import 'package:shimmer/shimmer.dart';
 import 'package:flutter_facebook_auth/flutter_facebook_auth.dart';
 import 'package:linkedin_login/linkedin_login.dart';
+import 'package:sentry_flutter/sentry_flutter.dart';
 
-void main() async{
+// void main() async{
+//   await Hive.initFlutter();
+//   final myBox = await Hive.openBox('mybox');
+//   runApp(MyApp());
+// }
+
+Future<void> main() async {
   await Hive.initFlutter();
   final myBox = await Hive.openBox('mybox');
-  runApp(MyApp());
+  await SentryFlutter.init(
+    (options) {
+      options.dsn = 'https://a047b263ee2c4752b8f4d40405fab419@o4504604965208064.ingest.sentry.io/4504631868063744';
+      // Set tracesSampleRate to 1.0 to capture 100% of transactions for performance monitoring.
+      // We recommend adjusting this value in production.
+      options.tracesSampleRate = 1.0;
+    },
+    appRunner: () => runApp(MyApp()),
+  );
 }
 
 final GoogleSignIn _googleSignIn = GoogleSignIn(
@@ -202,8 +217,6 @@ class _MyHomePageState extends State<MyHomePage> with SingleTickerProviderStateM
                   //   bottom: 20, right: 20, left: 20),
                   child: ElevatedButton(
                     onPressed: (){
-                      print(emailController);
-                      print(namaController);
                       final Box box = Hive.box('mybox');
                       box.put('nama', namaController.text);
                       box.put('email', emailController.text);
@@ -241,14 +254,15 @@ class _MyHomePageState extends State<MyHomePage> with SingleTickerProviderStateM
                     Container(
                       child: ElevatedButton.icon(
                         onPressed: () async {
-                          FacebookAuth.instance.login(
+                          try {
+                            FacebookAuth.instance.login(
                             permissions: ["public_profile", "email"]).then((value){
                               FacebookAuth.instance.getUserData().then((userData) async{
                                 setState(() {
                                   _isLoggedIn = true;
                                   _userObj = userData;  
-                                    // print("login $_userObj['email']"); 
-                                    // print(_userObj["email"]);
+                                          // print("login $_userObj['email']"); 
+                                          // print(_userObj["email"]);
                                   final Box box = Hive.box('mybox');
                                   box.put('nama', _userObj["name"]);
                                   box.put('email', _userObj["email"]);
@@ -256,7 +270,29 @@ class _MyHomePageState extends State<MyHomePage> with SingleTickerProviderStateM
                                   Navigator.push(context, MaterialPageRoute(builder: (context)=>Home()));
                                 });
                               });
-                          });
+                            });
+                          } catch (exception, stackTrace) {
+                            await Sentry.captureException(
+                              exception,
+                              stackTrace: stackTrace,
+                            );
+                          }
+                          // FacebookAuth.instance.login(
+                          //   permissions: ["public_profile", "email"]).then((value){
+                          //     FacebookAuth.instance.getUserData().then((userData) async{
+                          //       setState(() {
+                          //         _isLoggedIn = true;
+                          //         _userObj = userData;  
+                          //           // print("login $_userObj['email']"); 
+                          //           // print(_userObj["email"]);
+                          //         final Box box = Hive.box('mybox');
+                          //         box.put('nama', _userObj["name"]);
+                          //         box.put('email', _userObj["email"]);
+                          //         box.put('login', 'facebook');
+                          //         Navigator.push(context, MaterialPageRoute(builder: (context)=>Home()));
+                          //       });
+                          //     });
+                          // });
                         }, 
                         icon: Image.network("https://upload.wikimedia.org/wikipedia/commons/thumb/b/b8/2021_Facebook_icon.svg/768px-2021_Facebook_icon.svg.png", height: 20,width: 20,),
                         label: Text('Sign in with Facebook', style: TextStyle(fontSize: 18, color: Colors.black),),
@@ -294,9 +330,6 @@ class _MyHomePageState extends State<MyHomePage> with SingleTickerProviderStateM
                                   ], 
                                   onGetUserProfile:
                                       (UserSucceededAction linkedInUser) {
-                                            print('Access token ${linkedInUser.user.token.accessToken}');
-                                            print('First name: ${linkedInUser.user.firstName!.localized!.label}');
-                                            print('Last Name ${linkedInUser.user.lastName!.localized!.label} ');
                                             final Box box = Hive.box('mybox');
                                             box.put('nama', linkedInUser.user.firstName!.localized!.label);
                                             box.put('email', linkedInUser!.user!.email!.elements![0]!.handleDeep!.emailAddress);
@@ -305,7 +338,6 @@ class _MyHomePageState extends State<MyHomePage> with SingleTickerProviderStateM
                                             Navigator.push(context, MaterialPageRoute(builder: (context)=>Home()));
                                   },
                                   onError: (UserFailedAction e) {
-                                            print('Error: ${e.toString()}');
                                   },
                                 ),
                                 fullscreenDialog: true,
@@ -323,126 +355,6 @@ class _MyHomePageState extends State<MyHomePage> with SingleTickerProviderStateM
                         ),
                       ),
                     )
-                    // Expanded(
-                    //   child: Container(
-                    //     margin: const EdgeInsets.only(
-                    //       bottom: 20, right: 20, left: 20),
-                    //     width:30,
-                    //     child: ElevatedButton(
-                    //       //label: const Text('Sign in with google', style: TextStyle(fontSize: 18),),
-                    //       style: ElevatedButton.styleFrom(
-                    //         backgroundColor: Colors.white, elevation: 20, minimumSize: const Size(60, 60), 
-                    //         foregroundColor: Colors.black,
-                    //         shape: RoundedRectangleBorder( //to set border radius to button
-                    //             borderRadius: BorderRadius.circular(30)
-                    //         ),
-                    //       ),
-                    //       onPressed: (() async {
-                    //         await _handleSignIn();
-                            
-                    //       }), child: Text('Sign in with google', style: TextStyle(fontSize: 18), textAlign: TextAlign.center,), 
-                    //       //icon: Image.network("https://www.freepnglogos.com/uploads/google-logo-png/google-logo-png-suite-everything-you-need-know-about-google-newest-0.png", height: 20, width: 20,),
-                           
-                    //     ),
-                    //   )
-                    // ),
-                    // Expanded(
-                    //   child: Container(
-                    //     margin: const EdgeInsets.only(
-                    //       bottom: 20, right: 20, left: 20),
-                    //     width:20,
-                    //     child: ElevatedButton(
-                    //       //label: const Text('Sign in with google', style: TextStyle(fontSize: 18),),
-                    //       style: ElevatedButton.styleFrom(
-                    //         backgroundColor: Colors.white, elevation: 20, minimumSize: const Size(60, 60), 
-                    //         foregroundColor: Colors.black,
-                    //         shape: RoundedRectangleBorder( //to set border radius to button
-                    //             borderRadius: BorderRadius.circular(30)
-                    //         ),
-                    //       ),
-                    //       onPressed: (() async {
-                    //         //await _login();
-                    //         FacebookAuth.instance.login(
-                    //           permissions: ["public_profile", "email"]).then((value){
-                    //             FacebookAuth.instance.getUserData().then((userData) async{
-                    //               setState(() {
-                    //                 _isLoggedIn = true;
-                    //                 _userObj = userData;  
-                    //                 // print("login $_userObj['email']"); 
-                    //                 // print(_userObj["email"]);
-                    //                 final Box box = Hive.box('mybox');
-                    //                 box.put('nama', _userObj["name"]);
-                    //                 box.put('email', _userObj["email"]);
-                    //                 Navigator.push(context, MaterialPageRoute(builder: (context)=>Home(nama: _userObj["name"],)));
-                    //               });
-                    //             });
-                    //           });
-                    //       }), child: Text('Sign in with facebook', style: TextStyle(fontSize: 18),textAlign: TextAlign.center,), 
-                    //       //icon: Image.network("https://www.freepnglogos.com/uploads/google-logo-png/google-logo-png-suite-everything-you-need-know-about-google-newest-0.png", height: 20, width: 20,),
-                           
-                    //     ),
-                    //   )
-                    // ),
-                    
-                    // Expanded(
-                    //   child: Container(
-                    //     margin: const EdgeInsets.only(
-                    //       bottom: 20, right: 20, left: 20),
-                    //     width:20,
-                    //     child: ElevatedButton(
-                    //       //label: const Text('Sign in with google', style: TextStyle(fontSize: 18),),
-                    //       style: ElevatedButton.styleFrom(
-                    //         backgroundColor: Colors.white, elevation: 20, minimumSize: const Size(60, 60), 
-                    //         foregroundColor: Colors.black,
-                    //         shape: RoundedRectangleBorder( //to set border radius to button
-                    //             borderRadius: BorderRadius.circular(30)
-                    //         ),
-                    //       ),
-                    //       onPressed: (() async {
-                    //         Navigator.push(
-                    //           context,
-                    //           MaterialPageRoute(
-                    //             builder: (BuildContext context) => LinkedInUserWidget(
-                    //               appBar: AppBar(
-                    //                 title: Text('OAuth User'),
-                    //               ),
-                    //               //destroySession: logoutUser,
-                    //               redirectUrl: 'https://youtube.com/callback',
-                    //               clientId: '86im5gggdfm1xo',
-                    //               clientSecret: 'bmBtJrCUmPyN3Nj0',
-                    //               projection:  [
-                    //                 ProjectionParameters.id,
-                    //                 ProjectionParameters.localizedFirstName,
-                    //                 ProjectionParameters.localizedLastName,
-                    //                 ProjectionParameters.firstName,
-                    //                 ProjectionParameters.lastName,
-                    //                 ProjectionParameters.profilePicture,
-                    //               ], onGetUserProfile: (UserSucceededAction value) { 
-                                    
-                    //                },
-                    //               //onGetUserProfile: (LinkedInUserModel linkedInUser) {
-
-
-                    //               // user = UserObject(
-                    //               //     firstName: linkedInUser?.firstName?.localized?.label,
-                    //               //     lastName: linkedInUser?.lastName?.localized?.label,
-                    //               //     email: linkedInUser
-                    //               //         ?.email?.elements[0]?.handleDeep?.emailAddress,
-                    //               //     profileImageUrl: linkedInUser?.profilePicture?.displayImageContent?.elements[0]?.identifiers[0]?.identifier,
-                    //               //   );
-
-                    //                 //Navigator.pop(context);
-                    //               //},
-                    //             ),
-                    //             fullscreenDialog: true,
-                    //           ),
-                    //         );
-                    //       }), child: Text('Sign in with linkedin', style: TextStyle(fontSize: 18),textAlign: TextAlign.center,), 
-                    //       //icon: Image.network("https://www.freepnglogos.com/uploads/google-logo-png/google-logo-png-suite-everything-you-need-know-about-google-newest-0.png", height: 20, width: 20,),
-                           
-                    //     ),
-                    //   )
-                    // ),
 
                   ],
                 ),

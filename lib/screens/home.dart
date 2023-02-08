@@ -127,6 +127,7 @@ class _HomeState extends State<Home> {
               } else if(box.get('login') == 'facebook'){
                 print('facebook');
                 await FacebookAuth.instance.logOut();
+                
               } else {
                 print('linkedIn');
               }
